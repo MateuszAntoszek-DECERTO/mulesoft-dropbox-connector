@@ -61,12 +61,14 @@ public abstract class DropboxDirectoryListener extends PollingSource<DropboxChan
 			return;
 		}
 		try {
-			ListFolderLongpollResult result = client.files().listFolderLongpoll(cursor, TimeUnit.SECONDS.toSeconds(30));
+			ListFolderLongpollResult result = client.files()
+					.listFolderLongpoll(cursor, TimeUnit.SECONDS.toSeconds(30));
 			if (result.getChanges()) {
-				cursor = printChanges(cursor, pollContext);
+				cursor = acceptChanges(cursor, pollContext);
 			}
 		} catch (DbxException e) {
 			LOGGER.error("Dropbox pool exception ", e);
+			return;
 		}
 	}
 
@@ -87,18 +89,16 @@ public abstract class DropboxDirectoryListener extends PollingSource<DropboxChan
 		return result.getCursor();
 	}
 
-	private String printChanges(String cursor, PollContext<DropboxChange, DropboxChange> pollContext) throws DbxException {
-		while (true) {
-			ListFolderResult result = client.files().listFolderContinue(cursor);
+	private String acceptChanges(String cursor, PollContext<DropboxChange, DropboxChange> pollContext) throws DbxException {
+		ListFolderResult result = client.files().listFolderContinue(cursor);
+		while (result.getHasMore()) {
+			result = client.files().listFolderContinue(cursor);
 			for (Metadata metadata : result.getEntries()) {
 				if (isMetadataEventType(metadata)) {
 					acceptItem(pollContext, metadata);
 				}
 			}
 			cursor = result.getCursor();
-			if (!result.getHasMore()) {
-				break;
-			}
 		}
 		return cursor;
 	}
@@ -108,6 +108,12 @@ public abstract class DropboxDirectoryListener extends PollingSource<DropboxChan
 			item.setResult(createResult(metadata));
 			item.setId(metadata.getName());
 		});
+	}
+
+	Result<DropboxChange, DropboxChange> buildResult(DropboxChange dropboxChange) {
+		return Result.<DropboxChange, DropboxChange>builder()
+				.output(dropboxChange)
+				.build();
 	}
 
 	protected abstract Result<DropboxChange, DropboxChange> createResult(Metadata metadata);

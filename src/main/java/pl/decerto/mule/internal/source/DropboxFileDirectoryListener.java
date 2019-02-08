@@ -16,9 +16,7 @@ public class DropboxFileDirectoryListener extends DropboxDirectoryListener {
 	protected Result<DropboxChange, DropboxChange> createResult(Metadata metadata) {
 		FileMetadata fileMetadata = (FileMetadata) metadata;
 		DropboxFileChange dropboxChange = new DropboxFileChange(metadata.getName(), metadata.getPathDisplay(), fileMetadata.getSize());
-		return Result.<DropboxChange, DropboxChange>builder()
-				.output(dropboxChange)
-				.build();
+		return buildResult(dropboxChange);
 	}
 
 	@Override

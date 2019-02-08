@@ -12,10 +12,11 @@ import pl.decerto.mule.internal.connection.DropboxTokenConnection;
 public class DropboxOperations {
 
 	@MediaType(ANY)
-	public List<Metadata> listFilesInFolder(@Optional String folderName, @Connection DropboxTokenConnection connection) throws DbxException {
+	public List<Metadata> listFilesInFolder(@Optional String folderName,
+			@Connection DropboxTokenConnection connection) throws DbxException {
 		return connection.getClient()
 				.files()
-				.listFolder(folderName == null ? "" : folderName)
+				.listFolder(folderName)
 				.getEntries();
 	}
 }
