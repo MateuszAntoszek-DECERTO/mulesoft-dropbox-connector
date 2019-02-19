@@ -7,16 +7,16 @@ import java.util.List;
 import org.mule.runtime.extension.api.annotation.param.Connection;
 import org.mule.runtime.extension.api.annotation.param.MediaType;
 import org.mule.runtime.extension.api.annotation.param.Optional;
-import pl.decerto.mule.internal.connection.DropboxTokenConnection;
+import pl.decerto.mule.api.connection.DropboxConnection;
 
 public class DropboxOperations {
 
 	@MediaType(ANY)
 	public List<Metadata> listFilesInFolder(@Optional String folderName,
-			@Connection DropboxTokenConnection connection) throws DbxException {
+			@Connection DropboxConnection connection) throws DbxException {
 		return connection.getClient()
 				.files()
-				.listFolder(folderName)
+				.listFolder(folderName == null ? "" : folderName)
 				.getEntries();
 	}
 }

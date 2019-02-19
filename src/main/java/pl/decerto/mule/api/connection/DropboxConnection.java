@@ -1,4 +1,4 @@
-package pl.decerto.mule.internal.connection;
+package pl.decerto.mule.api.connection;
 
 
 import com.dropbox.core.DbxRequestConfig;
@@ -8,13 +8,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public final class DropboxTokenConnection {
+public final class DropboxConnection {
 
-	private final Logger LOGGER = LoggerFactory.getLogger(DropboxTokenConnection.class);
+	private final Logger LOGGER = LoggerFactory.getLogger(DropboxConnection.class);
+	private static final String CLIENT_IDENTIFIER = "mulesoftCilient";
 
-	DbxClientV2 client;
+	private DbxClientV2 client;
 
-	public DropboxTokenConnection(String token) {
+	public DropboxConnection(String token) {
 		try {
 			client = connectWithToken(token);
 		} catch (IOException e) {
@@ -26,12 +27,12 @@ public final class DropboxTokenConnection {
 		return client;
 	}
 
-	public void disconectClient() {
+	public void disconnectClient() {
 		this.client = null;
 	}
 
 	private DbxClientV2 connectWithToken(String token) throws IOException {
-		DbxRequestConfig config = DbxRequestConfig.newBuilder("dropbox/java-tutorial").build();
+		DbxRequestConfig config = DbxRequestConfig.newBuilder(CLIENT_IDENTIFIER).build();
 		return new DbxClientV2(config, token);
 	}
 

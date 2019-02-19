@@ -20,7 +20,7 @@ import org.mule.runtime.extension.api.runtime.source.SourceCallbackContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.decerto.mule.internal.config.BasicConfiguration;
-import pl.decerto.mule.internal.connection.DropboxTokenConnection;
+import pl.decerto.mule.api.connection.DropboxConnection;
 import pl.decerto.mule.internal.source.results.DropboxChange;
 
 public abstract class DropboxDirectoryListener extends PollingSource<DropboxChange, DropboxChange> {
@@ -28,7 +28,7 @@ public abstract class DropboxDirectoryListener extends PollingSource<DropboxChan
 	private static final Logger LOGGER = LoggerFactory.getLogger(DropboxChange.class);
 
 	@Connection
-	private ConnectionProvider<DropboxTokenConnection> connection;
+	private ConnectionProvider<DropboxConnection> connection;
 
 	@Config
 	private BasicConfiguration config;
