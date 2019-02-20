@@ -3,10 +3,12 @@ package pl.decerto.mule.api.services;
 import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.Metadata;
+import com.dropbox.core.v2.files.RelocationResult;
 import com.dropbox.core.v2.sharing.SharedLinkMetadata;
 import com.dropbox.core.v2.sharing.SharedLinkSettings;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.ParseException;
 import java.util.List;
 import org.mule.runtime.api.metadata.TypedValue;
@@ -37,5 +39,21 @@ public class DropboxApiService {
 
 		return connection.getClient().sharing()
 				.createSharedLinkWithSettings(group.getPath(), settings);
+	}
+
+	public FileMetadata downloadFile(DropboxConnection connection, String filePath, OutputStream stream) throws DbxException, IOException {
+		return connection.getClient().files()
+				.download(filePath)
+				.download(stream);
+	}
+
+	public RelocationResult moveFile(DropboxConnection connection, String sourcePath, String destinationPath) throws DbxException {
+		return connection.getClient().files()
+				.moveV2(sourcePath, destinationPath);
+	}
+
+	public RelocationResult copyFile(DropboxConnection connection, String sourcePath, String destinationPath) throws DbxException {
+		return connection.getClient().files()
+				.copyV2(sourcePath, destinationPath);
 	}
 }
